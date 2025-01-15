@@ -1,54 +1,17 @@
 defmodule PaymentSystem.Payments do
   @moduledoc """
-  The Payments context.
+  The Payments context handles all payment-related operations.
   """
 
   import Ecto.Query, warn: false
   alias PaymentSystem.Repo
-
   alias PaymentSystem.Payments.Transaction
-
-  @doc """
-  Returns the list of transactions.
-
-  ## Examples
-
-      iex> list_transactions()
-      [%Transaction{}, ...]
-
-  """
-  def list_transactions do
-    Repo.all(Transaction)
-  end
-
-  @doc """
-  Gets a single transaction.
-
-  Raises `Ecto.NoResultsError` if the Transaction does not exist.
-
-  ## Examples
-
-      iex> get_transaction!(123)
-      %Transaction{}
-
-      iex> get_transaction!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_transaction!(id), do: Repo.get!(Transaction, id)
+  alias PaymentSystem.Accounts.Customer
 
   @doc """
   Creates a transaction.
-
-  ## Examples
-
-      iex> create_transaction(%{field: value})
-      {:ok, %Transaction{}}
-
-      iex> create_transaction(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
+  @spec create_transaction(map()) :: {:ok, Transaction.t()} | {:error, Ecto.Changeset.t()}
   def create_transaction(attrs \\ %{}) do
     %Transaction{}
     |> Transaction.changeset(attrs)
@@ -57,16 +20,8 @@ defmodule PaymentSystem.Payments do
 
   @doc """
   Updates a transaction.
-
-  ## Examples
-
-      iex> update_transaction(transaction, %{field: new_value})
-      {:ok, %Transaction{}}
-
-      iex> update_transaction(transaction, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
+  @spec update_transaction(Transaction.t(), map()) :: {:ok, Transaction.t()} | {:error, Ecto.Changeset.t()}
   def update_transaction(%Transaction{} = transaction, attrs) do
     transaction
     |> Transaction.changeset(attrs)
@@ -74,31 +29,28 @@ defmodule PaymentSystem.Payments do
   end
 
   @doc """
-  Deletes a transaction.
-
-  ## Examples
-
-      iex> delete_transaction(transaction)
-      {:ok, %Transaction{}}
-
-      iex> delete_transaction(transaction)
-      {:error, %Ecto.Changeset{}}
-
+  Gets a transaction by ID.
   """
-  def delete_transaction(%Transaction{} = transaction) do
-    Repo.delete(transaction)
+  @spec get_transaction!(binary()) :: Transaction.t() | nil
+  def get_transaction!(id), do: Repo.get!(Transaction, id)
+
+  @doc """
+  Gets a transaction by external ID.
+  """
+  @spec get_transaction_by_external_id(String.t()) :: Transaction.t() | nil
+  def get_transaction_by_external_id(external_id) do
+    Transaction
+    |> where([t], t.external_id == ^external_id)
+    |> Repo.one()
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking transaction changes.
-
-  ## Examples
-
-      iex> change_transaction(transaction)
-      %Ecto.Changeset{data: %Transaction{}}
-
+  Lists all transactions for a customer.
   """
-  def change_transaction(%Transaction{} = transaction, attrs \\ %{}) do
-    Transaction.changeset(transaction, attrs)
+  @spec list_customer_transactions(binary()) :: [Transaction.t()]
+  def list_customer_transactions(customer_id) do
+    Transaction
+    |> where([t], t.customer_id == ^customer_id)
+    |> Repo.all()
   end
 end
