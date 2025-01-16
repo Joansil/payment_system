@@ -29,9 +29,9 @@ defmodule PaymentSystemWeb.TransactionController do
   def update(conn, %{"id" => id, "transaction" => transaction_params}) do
     transaction = Payments.get_transaction!(id)
 
-    with {:ok, %Transaction{} = updated_transaction} <-
+    with {:ok, %Transaction{} = transaction} <-
            Payments.update_transaction(transaction, transaction_params) do
-      render(conn, "show.json", transaction: updated_transaction)
+      render(conn, :show, transaction: transaction)
     end
   end
 

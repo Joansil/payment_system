@@ -21,9 +21,15 @@ defmodule PaymentSystem.WebhooksTest do
     end
 
     test "create_webhook_endpoint/1 with valid data creates a webhook_endpoint" do
-      valid_attrs = %{events: ["option1", "option2"], secret_key: "some secret_key", url: "some url"}
+      valid_attrs = %{
+        events: ["option1", "option2"],
+        secret_key: "some secret_key",
+        url: "some url"
+      }
 
-      assert {:ok, %WebhookEndpoint{} = webhook_endpoint} = Webhooks.create_webhook_endpoint(valid_attrs)
+      assert {:ok, %WebhookEndpoint{} = webhook_endpoint} =
+               Webhooks.create_webhook_endpoint(valid_attrs)
+
       assert webhook_endpoint.events == ["option1", "option2"]
       assert webhook_endpoint.secret_key == "some secret_key"
       assert webhook_endpoint.url == "some url"
@@ -35,9 +41,16 @@ defmodule PaymentSystem.WebhooksTest do
 
     test "update_webhook_endpoint/2 with valid data updates the webhook_endpoint" do
       webhook_endpoint = webhook_endpoint_fixture()
-      update_attrs = %{events: ["option1"], secret_key: "some updated secret_key", url: "some updated url"}
 
-      assert {:ok, %WebhookEndpoint{} = webhook_endpoint} = Webhooks.update_webhook_endpoint(webhook_endpoint, update_attrs)
+      update_attrs = %{
+        events: ["option1"],
+        secret_key: "some updated secret_key",
+        url: "some updated url"
+      }
+
+      assert {:ok, %WebhookEndpoint{} = webhook_endpoint} =
+               Webhooks.update_webhook_endpoint(webhook_endpoint, update_attrs)
+
       assert webhook_endpoint.events == ["option1"]
       assert webhook_endpoint.secret_key == "some updated secret_key"
       assert webhook_endpoint.url == "some updated url"
@@ -45,14 +58,20 @@ defmodule PaymentSystem.WebhooksTest do
 
     test "update_webhook_endpoint/2 with invalid data returns error changeset" do
       webhook_endpoint = webhook_endpoint_fixture()
-      assert {:error, %Ecto.Changeset{}} = Webhooks.update_webhook_endpoint(webhook_endpoint, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Webhooks.update_webhook_endpoint(webhook_endpoint, @invalid_attrs)
+
       assert webhook_endpoint == Webhooks.get_webhook_endpoint!(webhook_endpoint.id)
     end
 
     test "delete_webhook_endpoint/1 deletes the webhook_endpoint" do
       webhook_endpoint = webhook_endpoint_fixture()
       assert {:ok, %WebhookEndpoint{}} = Webhooks.delete_webhook_endpoint(webhook_endpoint)
-      assert_raise Ecto.NoResultsError, fn -> Webhooks.get_webhook_endpoint!(webhook_endpoint.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Webhooks.get_webhook_endpoint!(webhook_endpoint.id)
+      end
     end
 
     test "change_webhook_endpoint/1 returns a webhook_endpoint changeset" do
