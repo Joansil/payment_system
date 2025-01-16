@@ -12,8 +12,7 @@ defmodule PaymentSystemWeb.WebhookEndpointController do
   end
 
   def create(conn, %{"webhook_endpoint" => webhook_endpoint_params}) do
-    with {:ok, %WebhookEndpoint{} = webhook_endpoint} <-
-           Webhooks.create_webhook_endpoint(webhook_endpoint_params) do
+    with {:ok, %WebhookEndpoint{} = webhook_endpoint} <- Webhooks.create_webhook_endpoint(webhook_endpoint_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/webhook_endpoints/#{webhook_endpoint}")
@@ -29,8 +28,7 @@ defmodule PaymentSystemWeb.WebhookEndpointController do
   def update(conn, %{"id" => id, "webhook_endpoint" => webhook_endpoint_params}) do
     webhook_endpoint = Webhooks.get_webhook_endpoint!(id)
 
-    with {:ok, %WebhookEndpoint{} = webhook_endpoint} <-
-           Webhooks.update_webhook_endpoint(webhook_endpoint, webhook_endpoint_params) do
+    with {:ok, %WebhookEndpoint{} = webhook_endpoint} <- Webhooks.update_webhook_endpoint(webhook_endpoint, webhook_endpoint_params) do
       render(conn, :show, webhook_endpoint: webhook_endpoint)
     end
   end
