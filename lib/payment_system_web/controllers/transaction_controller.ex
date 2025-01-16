@@ -1,6 +1,7 @@
 defmodule PaymentSystemWeb.TransactionController do
   use PaymentSystemWeb, :controller
 
+
   alias PaymentSystem.Payments
   alias PaymentSystem.Payments.Transaction
 
@@ -28,9 +29,9 @@ defmodule PaymentSystemWeb.TransactionController do
   def update(conn, %{"id" => id, "transaction" => transaction_params}) do
     transaction = Payments.get_transaction!(id)
 
-    with {:ok, %Transaction{} = transaction} <-
+    with {:ok, %Transaction{} = updated_transaction} <-
            Payments.update_transaction(transaction, transaction_params) do
-      render(conn, :show, transaction: transaction)
+      render(conn, "show.json", transaction: updated_transaction)
     end
   end
 

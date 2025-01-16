@@ -52,13 +52,8 @@ defmodule PaymentSystemWeb.WebhookEndpointControllerTest do
   describe "update webhook_endpoint" do
     setup [:create_webhook_endpoint]
 
-    test "renders webhook_endpoint when data is valid", %{
-      conn: conn,
-      webhook_endpoint: %WebhookEndpoint{id: id} = webhook_endpoint
-    } do
-      conn =
-        put(conn, ~p"/api/webhook_endpoints/#{webhook_endpoint}", webhook_endpoint: @update_attrs)
-
+    test "renders webhook_endpoint when data is valid", %{conn: conn, webhook_endpoint: %WebhookEndpoint{id: id} = webhook_endpoint} do
+      conn = put(conn, ~p"/api/webhook_endpoints/#{webhook_endpoint}", webhook_endpoint: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/webhook_endpoints/#{id}")
@@ -72,11 +67,7 @@ defmodule PaymentSystemWeb.WebhookEndpointControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, webhook_endpoint: webhook_endpoint} do
-      conn =
-        put(conn, ~p"/api/webhook_endpoints/#{webhook_endpoint}",
-          webhook_endpoint: @invalid_attrs
-        )
-
+      conn = put(conn, ~p"/api/webhook_endpoints/#{webhook_endpoint}", webhook_endpoint: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
