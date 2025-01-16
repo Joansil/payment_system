@@ -8,20 +8,16 @@ defmodule PaymentSystemWeb.TransactionControllerTest do
   @create_attrs %{
     amount: "120.5",
     currency: "some currency",
-    customer_id: "some customer_id",
-    external_id: "some external_id",
     metadata: %{},
     status: "some status"
   }
   @update_attrs %{
     amount: "456.7",
     currency: "some updated currency",
-    customer_id: "some updated customer_id",
-    external_id: "some updated external_id",
     metadata: %{},
     status: "some updated status"
   }
-  @invalid_attrs %{amount: nil, currency: nil, customer_id: nil, external_id: nil, metadata: nil, status: nil}
+  @invalid_attrs %{amount: nil, currency: nil, metadata: nil, status: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -45,8 +41,6 @@ defmodule PaymentSystemWeb.TransactionControllerTest do
                "id" => ^id,
                "amount" => "120.5",
                "currency" => "some currency",
-               "customer_id" => "some customer_id",
-               "external_id" => "some external_id",
                "metadata" => %{},
                "status" => "some status"
              } = json_response(conn, 200)["data"]
@@ -61,7 +55,10 @@ defmodule PaymentSystemWeb.TransactionControllerTest do
   describe "update transaction" do
     setup [:create_transaction]
 
-    test "renders transaction when data is valid", %{conn: conn, transaction: %Transaction{id: id} = transaction} do
+    test "renders transaction when data is valid", %{
+      conn: conn,
+      transaction: %Transaction{id: id} = transaction
+    } do
       conn = put(conn, ~p"/api/transactions/#{transaction}", transaction: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
@@ -71,8 +68,6 @@ defmodule PaymentSystemWeb.TransactionControllerTest do
                "id" => ^id,
                "amount" => "456.7",
                "currency" => "some updated currency",
-               "customer_id" => "some updated customer_id",
-               "external_id" => "some updated external_id",
                "metadata" => %{},
                "status" => "some updated status"
              } = json_response(conn, 200)["data"]
