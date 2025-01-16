@@ -13,7 +13,6 @@ defmodule PaymentSystem.Accounts.User do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true
@@ -29,8 +28,8 @@ defmodule PaymentSystem.Accounts.User do
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :password_hash, :role])
-    |> validate_required([:email, :password_hash, :role])
+    |> cast(attrs, [:email, :password, :role])
+    |> validate_required([:email, :password, :role])
     |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/)
     |> validate_length(:password, min: 6)
     |> unique_constraint(:email)
