@@ -21,7 +21,12 @@ defmodule PaymentSystem.AccountsTest do
     end
 
     test "create_customer/1 with valid data creates a customer" do
-      valid_attrs = %{email: "some email", external_id: "some external_id", name: "some name", status: "some status"}
+      valid_attrs = %{
+        email: "some email",
+        external_id: "some external_id",
+        name: "some name",
+        status: "some status"
+      }
 
       assert {:ok, %Customer{} = customer} = Accounts.create_customer(valid_attrs)
       assert customer.email == "some email"
@@ -36,7 +41,13 @@ defmodule PaymentSystem.AccountsTest do
 
     test "update_customer/2 with valid data updates the customer" do
       customer = customer_fixture()
-      update_attrs = %{email: "some updated email", external_id: "some updated external_id", name: "some updated name", status: "some updated status"}
+
+      update_attrs = %{
+        email: "some updated email",
+        external_id: "some updated external_id",
+        name: "some updated name",
+        status: "some updated status"
+      }
 
       assert {:ok, %Customer{} = customer} = Accounts.update_customer(customer, update_attrs)
       assert customer.email == "some updated email"
@@ -95,7 +106,12 @@ defmodule PaymentSystem.AccountsTest do
 
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
-      update_attrs = %{email: "some updated email", password_hash: "some updated password_hash", role: "some updated role"}
+
+      update_attrs = %{
+        email: "some updated email",
+        password_hash: "some updated password_hash",
+        role: "some updated role"
+      }
 
       assert {:ok, %User{} = user} = Accounts.update_user(user, update_attrs)
       assert user.email == "some updated email"
@@ -153,7 +169,12 @@ defmodule PaymentSystem.AccountsTest do
 
     test "update_customer/2 with valid data updates the customer" do
       customer = customer_fixture()
-      update_attrs = %{email: "some updated email", name: "some updated name", phone: "some updated phone"}
+
+      update_attrs = %{
+        email: "some updated email",
+        name: "some updated name",
+        phone: "some updated phone"
+      }
 
       assert {:ok, %Customer{} = customer} = Accounts.update_customer(customer, update_attrs)
       assert customer.email == "some updated email"

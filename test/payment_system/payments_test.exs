@@ -8,7 +8,14 @@ defmodule PaymentSystem.PaymentsTest do
 
     import PaymentSystem.PaymentsFixtures
 
-    @invalid_attrs %{amount: nil, currency: nil, customer_id: nil, external_id: nil, metadata: nil, status: nil}
+    @invalid_attrs %{
+      amount: nil,
+      currency: nil,
+      customer_id: nil,
+      external_id: nil,
+      metadata: nil,
+      status: nil
+    }
 
     test "list_transactions/0 returns all transactions" do
       transaction = transaction_fixture()
@@ -21,7 +28,14 @@ defmodule PaymentSystem.PaymentsTest do
     end
 
     test "create_transaction/1 with valid data creates a transaction" do
-      valid_attrs = %{amount: "120.5", currency: "some currency", customer_id: "some customer_id", external_id: "some external_id", metadata: %{}, status: "some status"}
+      valid_attrs = %{
+        amount: "120.5",
+        currency: "some currency",
+        customer_id: "some customer_id",
+        external_id: "some external_id",
+        metadata: %{},
+        status: "some status"
+      }
 
       assert {:ok, %Transaction{} = transaction} = Payments.create_transaction(valid_attrs)
       assert transaction.amount == Decimal.new("120.5")
@@ -38,9 +52,19 @@ defmodule PaymentSystem.PaymentsTest do
 
     test "update_transaction/2 with valid data updates the transaction" do
       transaction = transaction_fixture()
-      update_attrs = %{amount: "456.7", currency: "some updated currency", customer_id: "some updated customer_id", external_id: "some updated external_id", metadata: %{}, status: "some updated status"}
 
-      assert {:ok, %Transaction{} = transaction} = Payments.update_transaction(transaction, update_attrs)
+      update_attrs = %{
+        amount: "456.7",
+        currency: "some updated currency",
+        customer_id: "some updated customer_id",
+        external_id: "some updated external_id",
+        metadata: %{},
+        status: "some updated status"
+      }
+
+      assert {:ok, %Transaction{} = transaction} =
+               Payments.update_transaction(transaction, update_attrs)
+
       assert transaction.amount == Decimal.new("456.7")
       assert transaction.currency == "some updated currency"
       assert transaction.customer_id == "some updated customer_id"
@@ -51,7 +75,10 @@ defmodule PaymentSystem.PaymentsTest do
 
     test "update_transaction/2 with invalid data returns error changeset" do
       transaction = transaction_fixture()
-      assert {:error, %Ecto.Changeset{}} = Payments.update_transaction(transaction, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Payments.update_transaction(transaction, @invalid_attrs)
+
       assert transaction == Payments.get_transaction!(transaction.id)
     end
 
@@ -85,9 +112,16 @@ defmodule PaymentSystem.PaymentsTest do
     end
 
     test "create_payment_method/1 with valid data creates a payment_method" do
-      valid_attrs = %{account_number: "some account_number", is_default: true, provider: "some provider", type: "some type"}
+      valid_attrs = %{
+        account_number: "some account_number",
+        is_default: true,
+        provider: "some provider",
+        type: "some type"
+      }
 
-      assert {:ok, %PaymentMethod{} = payment_method} = Payments.create_payment_method(valid_attrs)
+      assert {:ok, %PaymentMethod{} = payment_method} =
+               Payments.create_payment_method(valid_attrs)
+
       assert payment_method.account_number == "some account_number"
       assert payment_method.is_default == true
       assert payment_method.provider == "some provider"
@@ -100,9 +134,17 @@ defmodule PaymentSystem.PaymentsTest do
 
     test "update_payment_method/2 with valid data updates the payment_method" do
       payment_method = payment_method_fixture()
-      update_attrs = %{account_number: "some updated account_number", is_default: false, provider: "some updated provider", type: "some updated type"}
 
-      assert {:ok, %PaymentMethod{} = payment_method} = Payments.update_payment_method(payment_method, update_attrs)
+      update_attrs = %{
+        account_number: "some updated account_number",
+        is_default: false,
+        provider: "some updated provider",
+        type: "some updated type"
+      }
+
+      assert {:ok, %PaymentMethod{} = payment_method} =
+               Payments.update_payment_method(payment_method, update_attrs)
+
       assert payment_method.account_number == "some updated account_number"
       assert payment_method.is_default == false
       assert payment_method.provider == "some updated provider"
@@ -111,7 +153,10 @@ defmodule PaymentSystem.PaymentsTest do
 
     test "update_payment_method/2 with invalid data returns error changeset" do
       payment_method = payment_method_fixture()
-      assert {:error, %Ecto.Changeset{}} = Payments.update_payment_method(payment_method, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Payments.update_payment_method(payment_method, @invalid_attrs)
+
       assert payment_method == Payments.get_payment_method!(payment_method.id)
     end
 
@@ -145,7 +190,12 @@ defmodule PaymentSystem.PaymentsTest do
     end
 
     test "create_transaction/1 with valid data creates a transaction" do
-      valid_attrs = %{amount: "120.5", currency: "some currency", metadata: %{}, status: "some status"}
+      valid_attrs = %{
+        amount: "120.5",
+        currency: "some currency",
+        metadata: %{},
+        status: "some status"
+      }
 
       assert {:ok, %Transaction{} = transaction} = Payments.create_transaction(valid_attrs)
       assert transaction.amount == Decimal.new("120.5")
@@ -160,9 +210,17 @@ defmodule PaymentSystem.PaymentsTest do
 
     test "update_transaction/2 with valid data updates the transaction" do
       transaction = transaction_fixture()
-      update_attrs = %{amount: "456.7", currency: "some updated currency", metadata: %{}, status: "some updated status"}
 
-      assert {:ok, %Transaction{} = transaction} = Payments.update_transaction(transaction, update_attrs)
+      update_attrs = %{
+        amount: "456.7",
+        currency: "some updated currency",
+        metadata: %{},
+        status: "some updated status"
+      }
+
+      assert {:ok, %Transaction{} = transaction} =
+               Payments.update_transaction(transaction, update_attrs)
+
       assert transaction.amount == Decimal.new("456.7")
       assert transaction.currency == "some updated currency"
       assert transaction.metadata == %{}
@@ -171,7 +229,10 @@ defmodule PaymentSystem.PaymentsTest do
 
     test "update_transaction/2 with invalid data returns error changeset" do
       transaction = transaction_fixture()
-      assert {:error, %Ecto.Changeset{}} = Payments.update_transaction(transaction, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Payments.update_transaction(transaction, @invalid_attrs)
+
       assert transaction == Payments.get_transaction!(transaction.id)
     end
 

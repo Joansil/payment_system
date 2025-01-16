@@ -55,7 +55,10 @@ defmodule PaymentSystemWeb.PaymentMethodControllerTest do
   describe "update payment_method" do
     setup [:create_payment_method]
 
-    test "renders payment_method when data is valid", %{conn: conn, payment_method: %PaymentMethod{id: id} = payment_method} do
+    test "renders payment_method when data is valid", %{
+      conn: conn,
+      payment_method: %PaymentMethod{id: id} = payment_method
+    } do
       conn = put(conn, ~p"/api/payment_methods/#{payment_method}", payment_method: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 

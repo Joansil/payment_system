@@ -52,7 +52,10 @@ defmodule PaymentSystemWeb.CustomerControllerTest do
   describe "update customer" do
     setup [:create_customer]
 
-    test "renders customer when data is valid", %{conn: conn, customer: %Customer{id: id} = customer} do
+    test "renders customer when data is valid", %{
+      conn: conn,
+      customer: %Customer{id: id} = customer
+    } do
       conn = put(conn, ~p"/api/customers/#{customer}", customer: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
