@@ -7,17 +7,15 @@ defmodule PaymentSystemWeb.CustomerControllerTest do
 
   @create_attrs %{
     email: "some email",
-    external_id: "some external_id",
     name: "some name",
-    status: "some status"
+    phone: "some phone"
   }
   @update_attrs %{
     email: "some updated email",
-    external_id: "some updated external_id",
     name: "some updated name",
-    status: "some updated status"
+    phone: "some updated phone"
   }
-  @invalid_attrs %{email: nil, external_id: nil, name: nil, status: nil}
+  @invalid_attrs %{email: nil, name: nil, phone: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -40,9 +38,8 @@ defmodule PaymentSystemWeb.CustomerControllerTest do
       assert %{
                "id" => ^id,
                "email" => "some email",
-               "external_id" => "some external_id",
                "name" => "some name",
-               "status" => "some status"
+               "phone" => "some phone"
              } = json_response(conn, 200)["data"]
     end
 
@@ -64,9 +61,8 @@ defmodule PaymentSystemWeb.CustomerControllerTest do
       assert %{
                "id" => ^id,
                "email" => "some updated email",
-               "external_id" => "some updated external_id",
                "name" => "some updated name",
-               "status" => "some updated status"
+               "phone" => "some updated phone"
              } = json_response(conn, 200)["data"]
     end
 

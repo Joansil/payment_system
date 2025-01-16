@@ -20,8 +20,7 @@ defmodule PaymentSystemWeb.CustomerJSON do
       id: customer.id,
       name: customer.name,
       email: customer.email,
-      external_id: customer.external_id,
-      status: customer.status
+      phone: customer.phone
     }
   end
 end

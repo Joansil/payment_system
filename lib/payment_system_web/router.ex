@@ -7,6 +7,12 @@ defmodule PaymentSystemWeb.Router do
 
   scope "/api", PaymentSystemWeb do
     pipe_through :api
+
+    resources "/users", UserController, except: [:new, :edit]
+    resources "/customers", CustomerController, except: [:new, :edit]
+    resources "/payment_methods", PaymentMethodController, except: [:new, :edit]
+    resources "/transactions", TransactionController, except: [:new, :edit]
+    resources "/webhook_endpoints", WebhookEndpointController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

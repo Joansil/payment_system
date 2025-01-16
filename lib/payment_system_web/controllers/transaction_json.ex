@@ -18,11 +18,9 @@ defmodule PaymentSystemWeb.TransactionJSON do
   defp data(%Transaction{} = transaction) do
     %{
       id: transaction.id,
-      external_id: transaction.external_id,
       amount: transaction.amount,
       currency: transaction.currency,
       status: transaction.status,
-      customer_id: transaction.customer_id,
       metadata: transaction.metadata
     }
   end

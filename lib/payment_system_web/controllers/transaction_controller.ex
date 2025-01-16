@@ -1,34 +1,43 @@
 defmodule PaymentSystemWeb.TransactionController do
   use PaymentSystemWeb, :controller
+
   alias PaymentSystem.Payments
   alias PaymentSystem.Payments.Transaction
 
   action_fallback PaymentSystemWeb.FallbackController
 
+  def index(conn, _params) do
+    transactions = Payments.list_transactions()
+    render(conn, :index, transactions: transactions)
+  end
+
   def create(conn, %{"transaction" => transaction_params}) do
     with {:ok, %Transaction{} = transaction} <- Payments.create_transaction(transaction_params) do
       conn
       |> put_status(:created)
-      |> render("show.json", transaction: transaction)
+      |> put_resp_header("location", ~p"/api/transactions/#{transaction}")
+      |> render(:show, transaction: transaction)
     end
   end
 
   def show(conn, %{"id" => id}) do
     transaction = Payments.get_transaction!(id)
-    render(conn, "show.json", transaction: transaction)
+    render(conn, :show, transaction: transaction)
   end
 
   def update(conn, %{"id" => id, "transaction" => transaction_params}) do
     transaction = Payments.get_transaction!(id)
 
-    with {:ok, %Transaction{} = updated_transaction} <-
-           Payments.update_transaction(transaction, transaction_params) do
-      render(conn, "show.json", transaction: updated_transaction)
+    with {:ok, %Transaction{} = transaction} <- Payments.update_transaction(transaction, transaction_params) do
+      render(conn, :show, transaction: transaction)
     end
   end
 
-  def customer_transactions(conn, %{"customer_id" => customer_id}) do
-    transactions = Payments.list_customer_transactions(customer_id)
-    render(conn, "index.json", transactions: transactions)
+  def delete(conn, %{"id" => id}) do
+    transaction = Payments.get_transaction!(id)
+
+    with {:ok, %Transaction{}} <- Payments.delete_transaction(transaction) do
+      send_resp(conn, :no_content, "")
+    end
   end
 end
