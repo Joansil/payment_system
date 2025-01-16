@@ -1,6 +1,9 @@
 defmodule PaymentSystem.PaymentsTest do
   use PaymentSystem.DataCase
 
+  alias PaymentSystem.Payments
+  alias PaymentSystem.Payments.{Transaction, PaymentMethod}
+  import PaymentSystem.AccountsFixtures
   import PaymentSystem.PaymentsFixtures
   alias PaymentSystem.Payments
   alias PaymentSystem.Payments.{Transaction, PaymentMethod}

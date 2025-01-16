@@ -12,7 +12,8 @@ defmodule PaymentSystemWeb.PaymentMethodController do
   end
 
   def create(conn, %{"payment_method" => payment_method_params}) do
-    with {:ok, %PaymentMethod{} = payment_method} <- Payments.create_payment_method(payment_method_params) do
+    with {:ok, %PaymentMethod{} = payment_method} <-
+           Payments.create_payment_method(payment_method_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/payment_methods/#{payment_method}")
@@ -28,7 +29,8 @@ defmodule PaymentSystemWeb.PaymentMethodController do
   def update(conn, %{"id" => id, "payment_method" => payment_method_params}) do
     payment_method = Payments.get_payment_method!(id)
 
-    with {:ok, %PaymentMethod{} = payment_method} <- Payments.update_payment_method(payment_method, payment_method_params) do
+    with {:ok, %PaymentMethod{} = payment_method} <-
+           Payments.update_payment_method(payment_method, payment_method_params) do
       render(conn, :show, payment_method: payment_method)
     end
   end
