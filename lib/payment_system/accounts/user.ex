@@ -3,13 +3,13 @@ defmodule PaymentSystem.Accounts.User do
   import Ecto.Changeset
 
   @type t :: %__MODULE__{
-    email: String.t(),
-    password_hash: String.t(),
-    role: String.t(),
-    customers: [Customer.t()],
-    inserted_at: DateTime.t(),
-    updated_at: DateTime.t()
-  }
+          email: String.t(),
+          password_hash: String.t(),
+          role: String.t(),
+          customers: [Customer.t()],
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

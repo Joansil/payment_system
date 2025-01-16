@@ -3,17 +3,17 @@ defmodule PaymentSystem.Accounts.Customer do
   import Ecto.Changeset
 
   @type t :: %__MODULE__{
-    name: String.t(),
-    email: String.t(),
-    phone: String.t(),
-    user_id: binary_id(),
-    user: User.t(),
-    payment_methods: [PaymentMethod.t()],
-    transactions: [Transaction.t()],
-    webhook_endpoints: [WebhookEndpoint.t()],
-    inserted_at: DateTime.t(),
-    updated_at: DateTime.t()
-  }
+          name: String.t(),
+          email: String.t(),
+          phone: String.t(),
+          user_id: binary_id(),
+          user: User.t(),
+          payment_methods: [PaymentMethod.t()],
+          transactions: [Transaction.t()],
+          webhook_endpoints: [WebhookEndpoint.t()],
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
