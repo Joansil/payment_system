@@ -14,6 +14,29 @@ defmodule PaymentSystem.Accounts.User do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
+  @type t :: %__MODULE__{
+          email: String.t(),
+          password_hash: String.t(),
+          role: String.t(),
+          customers: [Customer.t()],
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
+
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+
+  @type t :: %__MODULE__{
+    email: String.t(),
+    password_hash: String.t(),
+    role: String.t(),
+    customers: [Customer.t()],
+    inserted_at: DateTime.t(),
+    updated_at: DateTime.t()
+  }
+
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true
@@ -23,13 +46,9 @@ defmodule PaymentSystem.Accounts.User do
     has_many :customers, PaymentSystem.Accounts.Customer
 
     timestamps()
-    has_many :customers, PaymentSystem.Accounts.Customer
-
-    timestamps()
   end
 
-  @spec changeset(t(), map()) :: Ecto.Changeset.t()
-  @spec changeset(t(), map()) :: Ecto.Changeset.t()
+  @doc false
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:email, :password_hash, :role])
