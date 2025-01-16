@@ -3,31 +3,46 @@ defmodule PaymentSystemWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug PaymentSystemWeb.Auth.Pipeline
+  end
+
+  pipeline :api_auth do
+    plug :accepts, ["json"]
+    plug PaymentSystemWeb.Auth.Pipeline
+    plug Guardian.Plug.EnsureAuthenticated
   end
 
   scope "/api", PaymentSystemWeb do
     pipe_through :api
 
-    resources "/users", UserController, except: [:new, :edit]
-    resources "/customers", CustomerController, except: [:new, :edit]
-    resources "/payment_methods", PaymentMethodController, except: [:new, :edit]
-    resources "/transactions", TransactionController, except: [:new, :edit]
-    resources "/webhook_endpoints", WebhookEndpointController, except: [:new, :edit]
+    post "/users/register", UserController, :create
+    post "/users/login", UserController, :login
   end
 
-  # Enable LiveDashboard and Swoosh mailbox preview in development
-  if Application.compile_env(:payment_system, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
-    import Phoenix.LiveDashboard.Router
+  scope "/api", PaymentSystemWeb do
+    pipe_through :api_auth
 
+    # User and Customer Management
+    resources "/users", UserController, except: [:new, :edit, :create]
+    resources "/customers", CustomerController, except: [:new, :edit]
+
+    # Payment Methods
+    resources "/payment_methods", PaymentMethodController, except: [:new, :edit]
+    post "/payment_methods/:id/set_default", PaymentMethodController, :set_default
+
+    # Transactions
+    resources "/transactions", TransactionController, except: [:new, :edit, :update, :delete]
+    get "/transactions/:id/status", TransactionController, :check_status
+    post "/transactions/:id/refund", TransactionController, :refund
+
+    # Webhooks
+    resources "/webhook_endpoints", WebhookEndpointController, except: [:new, :edit]
+    post "/webhook_endpoints/:id/test", WebhookEndpointController, :test
+  end
+
+  if Mix.env() in [:dev, :test] do
     scope "/dev" do
       pipe_through [:fetch_session, :protect_from_forgery]
-
-      live_dashboard "/dashboard", metrics: PaymentSystemWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
