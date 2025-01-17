@@ -3,6 +3,7 @@ defmodule PaymentSystem.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
+      add :id, :binary_id, primary_key: true
       add :email, :string
       add :password_hash, :string
       add :role, :string
