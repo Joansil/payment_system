@@ -1,7 +1,6 @@
 defmodule PaymentSystemWeb.TransactionController do
   use PaymentSystemWeb, :controller
 
-
   alias PaymentSystem.Payments
   alias PaymentSystem.Payments.Transaction
 
