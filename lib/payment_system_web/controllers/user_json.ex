@@ -19,7 +19,7 @@ defmodule PaymentSystemWeb.UserJSON do
     %{
       id: user.id,
       email: user.email,
-      password: user.password,
+      password: user.password_hash,
       role: user.role
     }
   end

@@ -11,7 +11,7 @@ defmodule PaymentSystem.AccountsFixtures do
     {:ok, customer} =
       attrs
       |> Enum.into(%{
-        email: "some email",
+        email: unique_customer_email(),
         external_id: "some external_id",
         name: "some name",
         status: "some status"
@@ -20,11 +20,6 @@ defmodule PaymentSystem.AccountsFixtures do
 
     customer
   end
-
-  @doc """
-  Generate a unique user email.
-  """
-  def unique_user_email, do: "some email#{System.unique_integer([:positive])}"
 
   @doc """
   Generate a user.
@@ -43,23 +38,12 @@ defmodule PaymentSystem.AccountsFixtures do
   end
 
   @doc """
-  Generate a unique customer email.
+  Generate a unique user email.
   """
-  def unique_customer_email, do: "some email#{System.unique_integer([:positive])}"
+  def unique_user_email, do: "user@example.com#{System.unique_integer([:positive])}"
 
   @doc """
-  Generate a customer.
+  Generate a unique customer email.
   """
-  def customer_fixture(attrs \\ %{}) do
-    {:ok, customer} =
-      attrs
-      |> Enum.into(%{
-        email: unique_customer_email(),
-        name: "some name",
-        phone: "some phone"
-      })
-      |> PaymentSystem.Accounts.create_customer()
-
-    customer
-  end
+  def unique_customer_email, do: "customer@example.com#{System.unique_integer([:positive])}"
 end

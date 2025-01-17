@@ -23,7 +23,7 @@ defmodule PaymentSystemWeb.Router do
     pipe_through :api_auth
 
     # User and Customer Management
-    resources "/users", UserController, except: [:new, :edit, :create]
+    resources "/users", UserController, except: [:new, :edit]
     resources "/customers", CustomerController, except: [:new, :edit]
 
     # Payment Methods

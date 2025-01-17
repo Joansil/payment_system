@@ -6,7 +6,7 @@ defmodule PaymentSystem.Accounts.Customer do
           name: String.t(),
           email: String.t(),
           phone: String.t(),
-          user_id: binary_id(),
+          user_id: Ecto.UUID.t(),
           user: User.t(),
           payment_methods: [PaymentMethod.t()],
           transactions: [Transaction.t()],

@@ -1,6 +1,7 @@
 defmodule PaymentSystem.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Ecto.UUID
 
   @type t :: %__MODULE__{
           email: String.t(),
@@ -13,6 +14,7 @@ defmodule PaymentSystem.Accounts.User do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+
   schema "users" do
     field :email, :string
     field :password_hash, :string

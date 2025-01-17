@@ -39,21 +39,4 @@ defmodule PaymentSystem.PaymentsFixtures do
 
     payment_method
   end
-
-  @doc """
-  Generate a transaction.
-  """
-  def transaction_fixture(attrs \\ %{}) do
-    {:ok, transaction} =
-      attrs
-      |> Enum.into(%{
-        amount: "120.5",
-        currency: "some currency",
-        metadata: %{},
-        status: "some status"
-      })
-      |> PaymentSystem.Payments.create_transaction()
-
-    transaction
-  end
 end

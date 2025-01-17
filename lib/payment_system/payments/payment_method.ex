@@ -7,7 +7,7 @@ defmodule PaymentSystem.Payments.PaymentMethod do
           provider: String.t(),
           account_number: String.t(),
           is_default: boolean(),
-          customer_id: binary_id(),
+          customer_id: Ecto.UUID.t(),
           customer: Customer.t(),
           transactions: [Transaction.t()],
           inserted_at: DateTime.t(),

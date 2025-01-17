@@ -6,7 +6,7 @@ defmodule PaymentSystem.Payments do
   import Ecto.Query, warn: false
   alias PaymentSystem.Repo
   alias PaymentSystem.Payments.Transaction
-  alias PaymentSystem.Accounts.Customer
+  # alias PaymentSystem.Accounts.Customer
   alias PaymentSystem.Payments.PaymentMethod
 
   @doc """
