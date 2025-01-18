@@ -2,6 +2,7 @@ defmodule PaymentSystemWeb.CustomerController do
   use PaymentSystemWeb, :controller
 
   alias PaymentSystem.Accounts
+  alias PaymentSystem.Accounts.User
   alias PaymentSystem.Accounts.Customer
 
   action_fallback PaymentSystemWeb.FallbackController

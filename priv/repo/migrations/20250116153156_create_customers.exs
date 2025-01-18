@@ -6,7 +6,7 @@ defmodule PaymentSystem.Repo.Migrations.CreateCustomers do
       add :name, :string
       add :email, :string
       add :phone, :string
-      add :user_id, references(:users, on_delete: :nothing)
+      add :user_id, references(:users, type: :binary_id, on_delete: :nothing)
 
       timestamps(type: :utc_datetime)
     end

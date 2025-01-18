@@ -46,7 +46,6 @@ config :payment_system, PaymentSystemWeb.Auth.Guardian,
   issuer: "payment_system",
   secret_key: "IYMJ2xXdsPYj6nBB10+nsk9/bNfeRllrNJOwIy7GGrUd729vBSciJfZjo7GXPhdw"
 
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

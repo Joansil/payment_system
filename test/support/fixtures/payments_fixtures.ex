@@ -12,9 +12,8 @@ defmodule PaymentSystem.PaymentsFixtures do
       attrs
       |> Enum.into(%{
         amount: "120.5",
-        currency: "some currency",
-        customer_id: "some customer_id",
-        external_id: "some external_id",
+        currency: "BRL",
+        customer_id: Ecto.UUID.generate().generate(),
         metadata: %{},
         status: "some status"
       })
@@ -30,10 +29,11 @@ defmodule PaymentSystem.PaymentsFixtures do
     {:ok, payment_method} =
       attrs
       |> Enum.into(%{
-        account_number: "some account_number",
+        account_number: "7667321987763-66",
         is_default: true,
-        provider: "some provider",
-        type: "some type"
+        provider: "Great Facility",
+        type: "some type",
+        customer_id: Ecto.UUID.generate().generate()
       })
       |> PaymentSystem.Payments.create_payment_method()
 
