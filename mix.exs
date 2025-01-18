@@ -9,7 +9,14 @@ defmodule PaymentSystem.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
     ]
   end
 
@@ -47,7 +54,8 @@ defmodule PaymentSystem.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:guardian, "~> 2.3"},
       {:bcrypt_elixir, "~> 3.0"},
-      {:comeonin, "~> 5.3"}
+      {:comeonin, "~> 5.3"},
+      {:excoveralls, "~> 0.14", only: [:test, :dev], runtime: false}
     ]
   end
 

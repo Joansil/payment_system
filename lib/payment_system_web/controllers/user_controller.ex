@@ -9,12 +9,11 @@ defmodule PaymentSystemWeb.UserController do
 
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
-      #  {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
+    with {:ok, %User{} = user} <- Accounts.create_user(user_params),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
       conn
       |> put_status(:created)
-      # token: token})
-      |> render("user_token.json", %{user: user})
+      |> render("user_token.json", %{user: user, token: token})
     end
   end
 
