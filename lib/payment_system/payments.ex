@@ -1,201 +1,188 @@
 defmodule PaymentSystem.Payments do
-  @moduledoc """
-  The Payments context handles all payment-related operations.
-  """
-
   import Ecto.Query, warn: false
   alias PaymentSystem.Repo
-  alias PaymentSystem.Payments.Transaction
-  # alias PaymentSystem.Accounts.Customer
-  alias PaymentSystem.Payments.PaymentMethod
+  alias PaymentSystem.Payments.{Transaction, PaymentMethod}
+  alias PaymentSystem.Accounts.User
 
-  @doc """
-  Returns the list of payment_methods.
+  # Transaction functions
+  @spec create_transaction(User.t(), map()) ::
+          {:ok, Transaction.t()} | {:error, Ecto.Changeset.t()}
+  def create_transaction(%User{} = user, attrs) do
+    with {:ok, customer_id} <- validate_customer(user, attrs),
+         {:ok, payment_method} <- validate_payment_method(customer_id, attrs) do
+      attrs =
+        attrs
+        |> Map.put("status", "pending")
+        |> Map.put("customer_id", customer_id)
+        |> Map.put("payment_method_id", payment_method.id)
 
-  ## Examples
-
-      iex> list_payment_methods()
-      [%PaymentMethod{}, ...]
-
-  """
-  def list_payment_methods do
-    Repo.all(PaymentMethod)
+      %Transaction{}
+      |> Transaction.changeset(attrs)
+      |> Repo.insert()
+    end
   end
 
-  @doc """
-  Gets a single payment_method.
+  @spec process_transaction(Transaction.t()) :: {:ok, Transaction.t()} | {:error, any()}
+  def process_transaction(%Transaction{} = transaction) do
+    # Simulação de processamento de pagamento
+    # Em produção, isso integraria com um gateway de pagamento real
+    # Simula latência de API
+    Process.sleep(1000)
 
-  Raises `Ecto.NoResultsError` if the Payment method does not exist.
+    status =
+      if Decimal.compare(transaction.amount, Decimal.new(1000)) == :lt do
+        "processed"
+      else
+        "failed"
+      end
 
-  ## Examples
+    transaction
+    |> Transaction.status_changeset(%{status: status})
+    |> Repo.update()
+  end
 
-      iex> get_payment_method!(123)
-      %PaymentMethod{}
+  @spec refund_transaction(Transaction.t(), String.t()) ::
+          {:ok, Transaction.t()} | {:error, any()}
+  def refund_transaction(%Transaction{} = original_transaction, amount) do
+    if original_transaction.status != "processed" do
+      {:error, :invalid_transaction_status}
+    else
+      decimal_amount = Decimal.new(amount)
 
-      iex> get_payment_method!(456)
-      ** (Ecto.NoResultsError)
+      if Decimal.compare(decimal_amount, original_transaction.amount) == :gt do
+        {:error, :refund_amount_too_high}
+      else
+        attrs = %{
+          amount: decimal_amount,
+          currency: original_transaction.currency,
+          customer_id: original_transaction.customer_id,
+          payment_method_id: original_transaction.payment_method_id,
+          type: "refund",
+          status: "pending",
+          metadata:
+            Map.put(
+              original_transaction.metadata,
+              "original_transaction_id",
+              original_transaction.id
+            )
+        }
 
-  """
-  def get_payment_method!(id), do: Repo.get!(PaymentMethod, id)
+        create_and_process_refund(attrs)
+      end
+    end
+  end
 
-  @doc """
-  Creates a payment_method.
+  @spec get_transaction!(binary_id()) :: Transaction.t() | no_return()
+  def get_transaction!(id), do: Repo.get!(Transaction, id)
 
-  ## Examples
+  @spec get_user_transaction(User.t(), binary_id()) ::
+          {:ok, Transaction.t()} | {:error, :not_found}
+  def get_user_transaction(%User{} = user, id) do
+    transaction =
+      Transaction
+      |> join(:inner, [t], c in assoc(t, :customer))
+      |> where([t, c], c.user_id == ^user.id and t.id == ^id)
+      |> preload([:customer, :payment_method])
+      |> Repo.one()
 
-      iex> create_payment_method(%{field: value})
-      {:ok, %PaymentMethod{}}
+    case transaction do
+      nil -> {:error, :not_found}
+      transaction -> {:ok, transaction}
+    end
+  end
 
-      iex> create_payment_method(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+  @spec list_user_transactions(User.t(), map()) :: [Transaction.t()]
+  def list_user_transactions(%User{} = user, pagination \\ %{}) do
+    Transaction
+    |> join(:inner, [t], c in assoc(t, :customer))
+    |> where([t, c], c.user_id == ^user.id)
+    |> preload([:customer, :payment_method])
+    |> paginate(pagination)
+    |> Repo.all()
+  end
 
-  """
+  # Payment Method functions
+  @spec create_payment_method(map()) :: {:ok, PaymentMethod.t()} | {:error, Ecto.Changeset.t()}
   def create_payment_method(attrs \\ %{}) do
     %PaymentMethod{}
     |> PaymentMethod.changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a payment_method.
-
-  ## Examples
-
-      iex> update_payment_method(payment_method, %{field: new_value})
-      {:ok, %PaymentMethod{}}
-
-      iex> update_payment_method(payment_method, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
+  @spec update_payment_method(PaymentMethod.t(), map()) ::
+          {:ok, PaymentMethod.t()} | {:error, Ecto.Changeset.t()}
   def update_payment_method(%PaymentMethod{} = payment_method, attrs) do
     payment_method
     |> PaymentMethod.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a payment_method.
-
-  ## Examples
-
-      iex> delete_payment_method(payment_method)
-      {:ok, %PaymentMethod{}}
-
-      iex> delete_payment_method(payment_method)
-      {:error, %Ecto.Changeset{}}
-
-  """
+  @spec delete_payment_method(PaymentMethod.t()) ::
+          {:ok, PaymentMethod.t()} | {:error, Ecto.Changeset.t()}
   def delete_payment_method(%PaymentMethod{} = payment_method) do
     Repo.delete(payment_method)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking payment_method changes.
+  @spec get_payment_method!(binary_id()) :: PaymentMethod.t() | no_return()
+  def get_payment_method!(id), do: Repo.get!(PaymentMethod, id)
 
-  ## Examples
+  @spec set_default_payment_method(PaymentMethod.t()) ::
+          {:ok, PaymentMethod.t()} | {:error, any()}
+  def set_default_payment_method(%PaymentMethod{} = payment_method) do
+    multi =
+      Ecto.Multi.new()
+      |> Ecto.Multi.update_all(
+        :unset_defaults,
+        from(p in PaymentMethod,
+          where: p.customer_id == ^payment_method.customer_id
+        ),
+        set: [is_default: false]
+      )
+      |> Ecto.Multi.update(
+        :set_default,
+        PaymentMethod.changeset(payment_method, %{is_default: true})
+      )
 
-      iex> change_payment_method(payment_method)
-      %Ecto.Changeset{data: %PaymentMethod{}}
-
-  """
-  def change_payment_method(%PaymentMethod{} = payment_method, attrs \\ %{}) do
-    PaymentMethod.changeset(payment_method, attrs)
+    case Repo.transaction(multi) do
+      {:ok, %{set_default: payment_method}} -> {:ok, payment_method}
+      {:error, _operation, changeset, _changes} -> {:error, changeset}
+    end
   end
 
-  alias PaymentSystem.Payments.Transaction
-
-  @doc """
-  Returns the list of transactions.
-
-  ## Examples
-
-      iex> list_transactions()
-      [%Transaction{}, ...]
-
-  """
-  def list_transactions do
-    Repo.all(Transaction)
+  # Private functions
+  defp create_and_process_refund(attrs) do
+    with {:ok, transaction} <- %Transaction{} |> Transaction.changeset(attrs) |> Repo.insert(),
+         {:ok, processed_transaction} <- process_transaction(transaction) do
+      {:ok, processed_transaction}
+    end
   end
 
-  @doc """
-  Gets a single transaction.
-
-  Raises `Ecto.NoResultsError` if the Transaction does not exist.
-
-  ## Examples
-
-      iex> get_transaction!(123)
-      %Transaction{}
-
-      iex> get_transaction!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_transaction!(id), do: Repo.get!(Transaction, id)
-
-  @doc """
-  Creates a transaction.
-
-  ## Examples
-
-      iex> create_transaction(%{field: value})
-      {:ok, %Transaction{}}
-
-      iex> create_transaction(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_transaction(attrs \\ %{}) do
-    %Transaction{}
-    |> Transaction.changeset(attrs)
-    |> Repo.insert()
+  defp validate_customer(%User{} = user, %{"customer_id" => customer_id}) do
+    case Repo.get_by(Customer, id: customer_id, user_id: user.id) do
+      nil -> {:error, :invalid_customer}
+      _customer -> {:ok, customer_id}
+    end
   end
 
-  @doc """
-  Updates a transaction.
+  defp validate_customer(_user, _attrs), do: {:error, :customer_id_required}
 
-  ## Examples
-
-      iex> update_transaction(transaction, %{field: new_value})
-      {:ok, %Transaction{}}
-
-      iex> update_transaction(transaction, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_transaction(%Transaction{} = transaction, attrs) do
-    transaction
-    |> Transaction.changeset(attrs)
-    |> Repo.update()
+  defp validate_payment_method(customer_id, %{"payment_method_id" => payment_method_id}) do
+    case Repo.get_by(PaymentMethod, id: payment_method_id, customer_id: customer_id) do
+      nil -> {:error, :invalid_payment_method}
+      payment_method -> {:ok, payment_method}
+    end
   end
 
-  @doc """
-  Deletes a transaction.
+  defp validate_payment_method(_customer_id, _attrs), do: {:error, :payment_method_id_required}
 
-  ## Examples
+  defp paginate(query, %{"page" => page, "per_page" => per_page}) do
+    page = String.to_integer(page)
+    per_page = String.to_integer(per_page)
 
-      iex> delete_transaction(transaction)
-      {:ok, %Transaction{}}
-
-      iex> delete_transaction(transaction)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_transaction(%Transaction{} = transaction) do
-    Repo.delete(transaction)
+    query
+    |> limit(^per_page)
+    |> offset(^((page - 1) * per_page))
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking transaction changes.
-
-  ## Examples
-
-      iex> change_transaction(transaction)
-      %Ecto.Changeset{data: %Transaction{}}
-
-  """
-  def change_transaction(%Transaction{} = transaction, attrs \\ %{}) do
-    Transaction.changeset(transaction, attrs)
-  end
+  defp paginate(query, _), do: query
 end
