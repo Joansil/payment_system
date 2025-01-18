@@ -46,6 +46,9 @@ jobs:
     
     - name: Check formatting
       run: mix format --check-formatted
+
+    - name: Format code (auto-fix) 
+      run: mix format
     
     - name: Run Credo
       run: mix credo --strict
