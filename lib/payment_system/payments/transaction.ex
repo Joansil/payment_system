@@ -3,18 +3,18 @@ defmodule PaymentSystem.Payments.Transaction do
   import Ecto.Changeset
 
   @type t :: %__MODULE__{
-    amount: Decimal.t(),
-    currency: String.t(),
-    status: String.t(),
-    type: String.t(),
-    metadata: map(),
-    customer_id: binary_id(),
-    payment_method_id: binary_id(),
-    customer: Customer.t(),
-    payment_method: PaymentMethod.t(),
-    inserted_at: DateTime.t(),
-    updated_at: DateTime.t()
-  }
+          amount: Decimal.t(),
+          currency: String.t(),
+          status: String.t(),
+          type: String.t(),
+          metadata: map(),
+          customer_id: binary_id(),
+          payment_method_id: binary_id(),
+          customer: Customer.t(),
+          payment_method: PaymentMethod.t(),
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -34,7 +34,15 @@ defmodule PaymentSystem.Payments.Transaction do
   @doc false
   def changeset(transaction, attrs) do
     transaction
-    |> cast(attrs, [:amount, :currency, :status, :type, :metadata, :customer_id, :payment_method_id])
+    |> cast(attrs, [
+      :amount,
+      :currency,
+      :status,
+      :type,
+      :metadata,
+      :customer_id,
+      :payment_method_id
+    ])
     |> validate_required([:amount, :currency, :status, :customer_id, :payment_method_id])
     |> validate_number(:amount, greater_than: 0)
     |> validate_inclusion(:currency, ["USD", "EUR", "BRL"])
