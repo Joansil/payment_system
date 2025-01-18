@@ -2,6 +2,7 @@ defmodule PaymentSystem.AccountsTest do
   use PaymentSystem.DataCase
 
   alias PaymentSystem.Accounts
+  alias PaymentSystem.Accounts.User
   import PaymentSystem.AccountsFixtures
 
   describe "users" do
@@ -43,7 +44,7 @@ defmodule PaymentSystem.AccountsTest do
       user = user_fixture(%{password: "valid_password"})
 
       assert {:ok, authenticated_user, token} =
-        Accounts.authenticate_user(user.email, "valid_password")
+               Accounts.authenticate_user(user.email, "valid_password")
 
       assert authenticated_user.id == user.id
       assert is_binary(token)

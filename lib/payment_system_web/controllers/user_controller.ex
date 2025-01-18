@@ -3,7 +3,7 @@ defmodule PaymentSystemWeb.UserController do
 
   alias PaymentSystem.Accounts
   alias PaymentSystem.Accounts.User
-  # alias PaymentSystemWeb.Auth.Guardian
+  alias PaymentSystemWeb.Auth.Guardian
 
   action_fallback PaymentSystemWeb.FallbackController
 
@@ -27,8 +27,9 @@ defmodule PaymentSystemWeb.UserController do
   end
 
   @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def index(conn, _params) do
-    users = Accounts.list_users()
+  def index(conn, params) do
+    pagination = Map.get(params, "page", %{})
+    users = Accounts.list_users(pagination)
     render(conn, "index.json", users: users)
   end
 
