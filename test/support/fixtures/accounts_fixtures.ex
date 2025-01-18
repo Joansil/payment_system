@@ -60,7 +60,7 @@ defmodule PaymentSystem.AccountsFixtures do
   def unique_user_email, do: "user@example.com#{System.unique_integer([:positive])}"
 
   @doc """
-  Generate a unique customer email.
+  Generate a unique user email.
   """
   def unique_customer_email, do: "customer@example.com#{System.unique_integer([:positive])}"
 end

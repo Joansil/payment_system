@@ -19,16 +19,22 @@ defmodule PaymentSystem.Payments.PaymentMethod do
   schema "payment_methods" do
     field :type, :string
     field :provider, :string
+    field :type, :string
+    field :provider, :string
     field :account_number, :string
     field :is_default, :boolean, default: false
 
     belongs_to :customer, PaymentSystem.Accounts.Customer
     has_many :transactions, PaymentSystem.Payments.Transaction
 
+    belongs_to :customer, PaymentSystem.Accounts.Customer
+    has_many :transactions, PaymentSystem.Payments.Transaction
+
+    timestamps()
     timestamps()
   end
 
-  @doc false
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(payment_method, attrs) do
     payment_method
     |> cast(attrs, [:type, :provider, :account_number, :is_default, :customer_id])

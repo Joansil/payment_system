@@ -15,6 +15,14 @@ defmodule PaymentSystem.PaymentsTest do
       metadata: nil,
       status: nil
     }
+    @invalid_attrs %{
+      amount: nil,
+      currency: nil,
+      customer_id: nil,
+      external_id: nil,
+      metadata: nil,
+      status: nil
+    }
 
     test "list_transactions/0 returns all transactions" do
       transaction = transaction_fixture()

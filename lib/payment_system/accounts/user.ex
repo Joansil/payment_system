@@ -23,8 +23,12 @@ defmodule PaymentSystem.Accounts.User do
     has_many :customers, PaymentSystem.Accounts.Customer
 
     timestamps()
+    has_many :customers, PaymentSystem.Accounts.Customer
+
+    timestamps()
   end
 
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(user, attrs) do
     user

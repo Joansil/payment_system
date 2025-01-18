@@ -3,18 +3,17 @@ defmodule PaymentSystemWeb.UserController do
 
   alias PaymentSystem.Accounts
   alias PaymentSystem.Accounts.User
-  # alias PaymentSystemWeb.Auth.Guardian
+  alias PaymentSystemWeb.Auth.Guardian
 
   action_fallback PaymentSystemWeb.FallbackController
 
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
-      #  {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
+    with {:ok, %User{} = user} <- Accounts.create_user(user_params),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
       conn
       |> put_status(:created)
-      # token: token})
-      |> render("user_token.json", %{user: user})
+      |> render("user_token.json", %{user: user, token: token})
     end
   end
 
@@ -28,8 +27,9 @@ defmodule PaymentSystemWeb.UserController do
   end
 
   @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def index(conn, _params) do
-    users = Accounts.list_users()
+  def index(conn, params) do
+    pagination = Map.get(params, "page", %{})
+    users = Accounts.list_users(pagination)
     render(conn, "index.json", users: users)
   end
 
