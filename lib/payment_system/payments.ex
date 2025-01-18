@@ -24,9 +24,9 @@ defmodule PaymentSystem.Payments do
 
   @spec process_transaction(Transaction.t()) :: {:ok, Transaction.t()} | {:error, any()}
   def process_transaction(%Transaction{} = transaction) do
-    # Simulação de processamento de pagamento
-    # Em produção, isso integraria com um gateway de pagamento real
-    # Simula latência de API
+    # Simulate payment processing
+    # In production, this would integrate with a real payment gateway
+    # Simulate API latency
     Process.sleep(1000)
 
     status =

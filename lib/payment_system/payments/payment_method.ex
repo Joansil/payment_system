@@ -3,16 +3,16 @@ defmodule PaymentSystem.Payments.PaymentMethod do
   import Ecto.Changeset
 
   @type t :: %__MODULE__{
-          type: String.t(),
-          provider: String.t(),
-          account_number: String.t(),
-          is_default: boolean(),
-          customer_id: Ecto.UUID.t(),
-          customer: Customer.t(),
-          transactions: [Transaction.t()],
-          inserted_at: DateTime.t(),
-          updated_at: DateTime.t()
-        }
+    type: String.t(),
+    provider: String.t(),
+    account_number: String.t(),
+    is_default: boolean(),
+    customer_id: binary_id(),
+    customer: Customer.t(),
+    transactions: [Transaction.t()],
+    inserted_at: DateTime.t(),
+    updated_at: DateTime.t()
+  }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -28,11 +28,14 @@ defmodule PaymentSystem.Payments.PaymentMethod do
     timestamps()
   end
 
-  @spec changeset(t(), map()) :: Ecto.Changeset.t()
+  @doc false
   def changeset(payment_method, attrs) do
     payment_method
     |> cast(attrs, [:type, :provider, :account_number, :is_default, :customer_id])
     |> validate_required([:type, :provider, :account_number, :customer_id])
+    |> validate_inclusion(:type, ["credit_card", "debit_card", "bank_transfer"])
+    |> validate_inclusion(:provider, ["visa", "mastercard", "amex", "bank"])
     |> foreign_key_constraint(:customer_id)
+    |> unique_constraint([:customer_id, :account_number])
   end
 end
