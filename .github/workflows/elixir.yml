@@ -45,10 +45,7 @@ jobs:
 
     - name: Format code (auto-fix) 
       run: mix format
-
-    - name: Format code (auto-fix) 
-      run: mix format
-    
+      
     - name: Check formatting
       run: mix format --check-formatted
 
