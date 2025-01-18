@@ -1,200 +1,102 @@
 defmodule PaymentSystem.Accounts do
-  @moduledoc """
-  The Accounts context.
-  """
-
   import Ecto.Query, warn: false
   alias PaymentSystem.Repo
+  alias PaymentSystem.Accounts.{User, Customer}
+  alias PaymentSystemWeb.Auth.Guardian
 
-  alias PaymentSystem.Accounts.Customer
-
-  @doc """
-  Returns the list of customers.
-
-  ## Examples
-
-      iex> list_customers()
-      [%Customer{}, ...]
-
-  """
-  def list_customers do
-    Repo.all(Customer)
-  end
-
-  @doc """
-  Gets a single customer.
-
-  Raises `Ecto.NoResultsError` if the Customer does not exist.
-
-  ## Examples
-
-      iex> get_customer!(123)
-      %Customer{}
-
-      iex> get_customer!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_customer!(id), do: Repo.get!(Customer, id)
-
-  @doc """
-  Creates a customer.
-
-  ## Examples
-
-      iex> create_customer(%{field: value})
-      {:ok, %Customer{}}
-
-      iex> create_customer(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_customer(attrs \\ %{}) do
-    %Customer{}
-    |> Customer.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a customer.
-
-  ## Examples
-
-      iex> update_customer(customer, %{field: new_value})
-      {:ok, %Customer{}}
-
-      iex> update_customer(customer, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_customer(%Customer{} = customer, attrs) do
-    customer
-    |> Customer.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a customer.
-
-  ## Examples
-
-      iex> delete_customer(customer)
-      {:ok, %Customer{}}
-
-      iex> delete_customer(customer)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_customer(%Customer{} = customer) do
-    Repo.delete(customer)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking customer changes.
-
-  ## Examples
-
-      iex> change_customer(customer)
-      %Ecto.Changeset{data: %Customer{}}
-
-  """
-  def change_customer(%Customer{} = customer, attrs \\ %{}) do
-    Customer.changeset(customer, attrs)
-  end
-
-  alias PaymentSystem.Accounts.User
-
-  @doc """
-  Returns the list of users.
-
-  ## Examples
-
-      iex> list_users()
-      [%User{}, ...]
-
-  """
-  def list_users do
-    Repo.all(User)
-  end
-
-  @doc """
-  Gets a single user.
-
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_user!(id), do: Repo.get!(User, id)
-
-  @doc """
-  Creates a user.
-
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
+  @spec create_user(map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a user.
+  @spec get_user(binary_id()) :: {:ok, User.t()} | {:error, :not_found}
+  def get_user(id) do
+    case Repo.get(User, id) do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
+  end
 
-  ## Examples
+  @spec get_user_by_email(String.t()) :: {:ok, User.t()} | {:error, :not_found}
+  def get_user_by_email(email) do
+    case Repo.get_by(User, email: email) do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
+  end
 
-      iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
+  @spec authenticate_user(String.t(), String.t()) ::
+    {:ok, User.t(), String.t()} | {:error, atom()}
+  def authenticate_user(email, password) do
+    Guardian.authenticate(email, password)
+  end
 
-      iex> update_user(user, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
+  @spec update_user(User.t(), map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a user.
-
-  ## Examples
-
-      iex> delete_user(user)
-      {:ok, %User{}}
-
-      iex> delete_user(user)
-      {:error, %Ecto.Changeset{}}
-
-  """
+  @spec delete_user(User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def delete_user(%User{} = user) do
     Repo.delete(user)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
-
-  ## Examples
-
-      iex> change_user(user)
-      %Ecto.Changeset{data: %User{}}
-
-  """
-  def change_user(%User{} = user, attrs \\ %{}) do
-    User.changeset(user, attrs)
+  @spec list_users(map()) :: [User.t()]
+  def list_users(pagination \\ %{}) do
+    User
+    |> paginate(pagination)
+    |> Repo.all()
   end
+
+  # Customer functions
+  @spec create_customer(User.t(), map()) :: {:ok, Customer.t()} | {:error, Ecto.Changeset.t()}
+  def create_customer(%User{} = user, attrs) do
+    attrs = Map.put(attrs, "user_id", user.id)
+
+    %Customer{}
+    |> Customer.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @spec get_customer(binary_id()) :: {:ok, Customer.t()} | {:error, :not_found}
+  def get_customer(id) do
+    case Repo.get(Customer, id) do
+      nil -> {:error, :not_found}
+      customer -> {:ok, customer}
+    end
+  end
+
+  @spec update_customer(Customer.t(), map()) :: {:ok, Customer.t()} | {:error, Ecto.Changeset.t()}
+  def update_customer(%Customer{} = customer, attrs) do
+    customer
+    |> Customer.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @spec delete_customer(Customer.t()) :: {:ok, Customer.t()} | {:error, Ecto.Changeset.t()}
+  def delete_customer(%Customer{} = customer) do
+    Repo.delete(customer)
+  end
+
+  @spec list_user_customers(User.t()) :: [Customer.t()]
+  def list_user_customers(%User{} = user) do
+    Customer
+    |> where([c], c.user_id == ^user.id)
+    |> Repo.all()
+  end
+
+  # Helpers
+  defp paginate(query, %{"page" => page, "per_page" => per_page}) do
+    page = String.to_integer(page)
+    per_page = String.to_integer(per_page)
+
+    query
+    |> limit(^per_page)
+    |> offset(^((page - 1) * per_page))
+  end
+  defp paginate(query, _), do: query
 end
