@@ -11,7 +11,7 @@ defmodule PaymentSystem.Accounts do
     |> Repo.insert()
   end
 
-  @spec get_user(binary_id()) :: {:ok, User.t()} | {:error, :not_found}
+  @spec get_user(Ecto.UUID.t()) :: {:ok, User.t()} | {:error, :not_found}
   def get_user(id) do
     case Repo.get(User, id) do
       nil -> {:error, :not_found}
@@ -28,7 +28,7 @@ defmodule PaymentSystem.Accounts do
   end
 
   @spec authenticate_user(String.t(), String.t()) ::
-    {:ok, User.t(), String.t()} | {:error, atom()}
+          {:ok, User.t(), String.t()} | {:error, atom()}
   def authenticate_user(email, password) do
     Guardian.authenticate(email, password)
   end
@@ -62,12 +62,20 @@ defmodule PaymentSystem.Accounts do
     |> Repo.insert()
   end
 
-  @spec get_customer(binary_id()) :: {:ok, Customer.t()} | {:error, :not_found}
+  @spec get_customer(Ecto.UUID.t()) :: {:ok, Customer.t()} | {:error, :not_found}
   def get_customer(id) do
     case Repo.get(Customer, id) do
       nil -> {:error, :not_found}
       customer -> {:ok, customer}
     end
+  end
+
+  @spec get_customer!(Ecto.UUID.t()) :: Customer.t()
+  def get_customer!(id), do: Repo.get!(Customer, id)
+
+  @spec list_customers() :: [Customer.t()]
+  def list_customers do
+    Repo.all(Customer)
   end
 
   @spec update_customer(Customer.t(), map()) :: {:ok, Customer.t()} | {:error, Ecto.Changeset.t()}
@@ -98,5 +106,6 @@ defmodule PaymentSystem.Accounts do
     |> limit(^per_page)
     |> offset(^((page - 1) * per_page))
   end
+
   defp paginate(query, _), do: query
 end
