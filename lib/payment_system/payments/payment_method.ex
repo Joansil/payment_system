@@ -3,16 +3,16 @@ defmodule PaymentSystem.Payments.PaymentMethod do
   import Ecto.Changeset
 
   @type t :: %__MODULE__{
-          type: String.t(),
-          provider: String.t(),
-          account_number: String.t(),
-          is_default: boolean(),
-          customer_id: Ecto.UUID.t(),
-          customer: Customer.t(),
-          transactions: [Transaction.t()],
-          inserted_at: DateTime.t(),
-          updated_at: DateTime.t()
-        }
+    type: String.t(),
+    provider: String.t(),
+    account_number: String.t(),
+    is_default: boolean(),
+    customer_id: binary_id(),
+    customer: Customer.t(),
+    transactions: [Transaction.t()],
+    inserted_at: DateTime.t(),
+    updated_at: DateTime.t()
+  }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
