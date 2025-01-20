@@ -19,7 +19,7 @@ defmodule PaymentSystemWeb.Router do
   end
 
   scope "/api", PaymentSystemWeb do
-    pipe_through :api_auth
+    pipe_through [:api, :api_auth]
 
     # User and Customer Management
     resources "/users", UserController, except: [:new, :edit]
