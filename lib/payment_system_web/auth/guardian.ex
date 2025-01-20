@@ -17,6 +17,11 @@ defmodule PaymentSystemWeb.Auth.Guardian do
     end
   end
 
+  def resource_from_claims(claims) do
+    user = PaymentSystem.Accounts.get_user(claims["sub"])
+    {:ok, user}
+  end
+
   @spec authenticate(String.t(), String.t()) ::
           {:ok, %PaymentSystem.Accounts.User{}, String.t()} | {:error, atom()}
   def authenticate(email, password) do

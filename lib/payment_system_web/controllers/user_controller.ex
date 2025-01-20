@@ -3,7 +3,7 @@ defmodule PaymentSystemWeb.UserController do
 
   alias PaymentSystem.Accounts
   alias PaymentSystem.Accounts.User
-  # alias PaymentSystemWeb.Auth.Guardian
+  alias PaymentSystemWeb.Auth.Guardian
 
   action_fallback PaymentSystemWeb.FallbackController
 

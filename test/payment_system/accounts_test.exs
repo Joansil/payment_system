@@ -43,7 +43,7 @@ defmodule PaymentSystem.AccountsTest do
       user = user_fixture(%{password: "valid_password"})
 
       assert {:ok, authenticated_user, token} =
-        Accounts.authenticate_user(user.email, "valid_password")
+               Accounts.authenticate_user(user.email, "valid_password")
 
       assert authenticated_user.id == user.id
       assert is_binary(token)

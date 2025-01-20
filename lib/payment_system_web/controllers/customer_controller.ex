@@ -2,8 +2,8 @@ defmodule PaymentSystemWeb.CustomerController do
   use PaymentSystemWeb, :controller
 
   alias PaymentSystem.Accounts
-  alias PaymentSystem.Accounts.User
-  alias PaymentSystem.Accounts.Customer
+  alias PaymentSystem.Accounts.{User, Customer}
+  alias PaymentSystemWeb.Auth.Guardian
 
   action_fallback PaymentSystemWeb.FallbackController
 
@@ -13,11 +13,25 @@ defmodule PaymentSystemWeb.CustomerController do
   end
 
   def create(conn, %{"customer" => customer_params}) do
-    with {:ok, %Customer{} = customer} <- Accounts.create_customer(nil, customer_params) do
+    current_user = Guardian.Plug.current_resource(conn)
+
+    if current_user do
+      with {:ok, %Customer{} = customer} <-
+             Accounts.create_customer(current_user, customer_params) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/customers/#{customer.id}")
+        |> render(:show, customer: customer)
+      else
+        {:error, changeset} ->
+          conn
+          |> put_status(:unprocessable_entity)
+          |> render(PaymentSystemWeb.ChangesetJSON, "error.json", changeset: changeset)
+      end
+    else
       conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/customers/#{customer}")
-      |> render(:show, customer: customer)
+      |> put_status(:unauthorized)
+      |> json(%{error: "Unauthorized"})
     end
   end
 
