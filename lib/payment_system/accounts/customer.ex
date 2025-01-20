@@ -22,7 +22,7 @@ defmodule PaymentSystem.Accounts.Customer do
     field :email, :string
     field :phone, :string
 
-    belongs_to :user, PaymentSystem.Accounts.User
+    belongs_to :user, PaymentSystem.Accounts.User, type: :binary_id
     has_many :payment_methods, PaymentSystem.Payments.PaymentMethod
     has_many :transactions, PaymentSystem.Payments.Transaction
     has_many :webhook_endpoints, PaymentSystem.Webhooks.WebhookEndpoint

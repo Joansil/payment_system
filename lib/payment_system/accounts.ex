@@ -62,6 +62,10 @@ defmodule PaymentSystem.Accounts do
     |> Repo.insert()
   end
 
+  def create_customer(nil, _attrs) do
+    {:error, :invalid_user}
+  end
+
   @spec get_customer(Ecto.UUID.t()) :: {:ok, Customer.t()} | {:error, :not_found}
   def get_customer(id) do
     case Repo.get(Customer, id) do
