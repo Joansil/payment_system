@@ -24,7 +24,6 @@ defmodule PaymentSystem.Accounts.User do
     timestamps()
   end
 
-
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(user, attrs) do
     user

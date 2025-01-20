@@ -15,11 +15,17 @@ defmodule PaymentSystemWeb.UserJSON do
     %{data: data(user)}
   end
 
+  @doc """
+  Renders a user token.
+  """
+  def user_token(%{token: token}) do
+    %{token: token}
+  end
+
   defp data(%User{} = user) do
     %{
       id: user.id,
       email: user.email,
-      password: user.password_hash,
       role: user.role
     }
   end
