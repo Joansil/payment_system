@@ -3,7 +3,6 @@ defmodule PaymentSystemWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug PaymentSystemWeb.Auth.Pipeline
   end
 
   pipeline :api_auth do
@@ -12,6 +11,7 @@ defmodule PaymentSystemWeb.Router do
     plug Guardian.Plug.EnsureAuthenticated
   end
 
+  # Rotas públicas
   scope "/api", PaymentSystemWeb do
     pipe_through :api
 
@@ -28,10 +28,10 @@ defmodule PaymentSystemWeb.Router do
 
     # Payment Methods
     resources "/payment_methods", PaymentMethodController, except: [:new, :edit]
-    post "/payment_methods/:id/set_default", PaymentMethodController, :set_default
+    post "/payment_methods/:id/default", PaymentMethodController, :set_default
 
     # Transactions
-    resources "/transactions", TransactionController, except: [:new, :edit, :update, :delete]
+    resources "/transactions", TransactionController, only: [:index, :show, :create]
     get "/transactions/:id/status", TransactionController, :check_status
     post "/transactions/:id/refund", TransactionController, :refund
 
@@ -40,6 +40,7 @@ defmodule PaymentSystemWeb.Router do
     post "/webhook_endpoints/:id/test", WebhookEndpointController, :test
   end
 
+  # Development routes
   if Mix.env() in [:dev, :test] do
     scope "/dev" do
       pipe_through [:fetch_session, :protect_from_forgery]
