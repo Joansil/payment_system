@@ -72,10 +72,10 @@ defmodule PaymentSystem.Payments do
     end
   end
 
-  @spec get_transaction!(binary_id()) :: Transaction.t() | no_return()
+  @spec get_transaction!(UUID.t()) :: Transaction.t() | no_return()
   def get_transaction!(id), do: Repo.get!(Transaction, id)
 
-  @spec get_user_transaction(User.t(), binary_id()) ::
+  @spec get_user_transaction(User.t(), UUID.t()) ::
           {:ok, Transaction.t()} | {:error, :not_found}
   def get_user_transaction(%User{} = user, id) do
     transaction =
@@ -123,7 +123,7 @@ defmodule PaymentSystem.Payments do
     Repo.delete(payment_method)
   end
 
-  @spec get_payment_method!(binary_id()) :: PaymentMethod.t() | no_return()
+  @spec get_payment_method!(UUID.t()) :: PaymentMethod.t() | no_return()
   def get_payment_method!(id), do: Repo.get!(PaymentMethod, id)
 
   @spec set_default_payment_method(PaymentMethod.t()) ::
