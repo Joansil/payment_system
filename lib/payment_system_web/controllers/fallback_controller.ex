@@ -13,4 +13,24 @@ defmodule PaymentSystemWeb.FallbackController do
     |> put_view(html: PaymentSystemWeb.ErrorHTML, json: PaymentSystemWeb.ErrorJSON)
     |> render(:"404")
   end
+
+  def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> json(%{errors: translate_errors(changeset)})
+  end
+
+  defp translate_errors(changeset) do
+    changeset
+    |> Ecto.Changeset.traverse_errors(fn {msg, opts} ->
+      Enum.reduce(opts, msg, fn {key, value}, acc ->
+        String.replace(acc, "%{#{key}}", to_string(value))
+      end)
+    end)
+    |> filter_sensitive_fields()
+  end
+
+  defp filter_sensitive_fields(errors) do
+    Map.drop(errors, [:password_hash])
+  end
 end
