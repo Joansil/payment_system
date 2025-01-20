@@ -11,7 +11,6 @@ defmodule PaymentSystemWeb.Router do
     plug Guardian.Plug.EnsureAuthenticated
   end
 
-  # Rotas públicas
   scope "/api", PaymentSystemWeb do
     pipe_through :api
 
