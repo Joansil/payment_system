@@ -25,10 +25,11 @@ defmodule PaymentSystem.PaymentsTest do
 
     test "create_transaction/2 with valid data creates a transaction",
          %{user: user, customer: customer, payment_method: payment_method} do
-      attrs = Map.merge(@valid_attrs, %{
-        "customer_id" => customer.id,
-        "payment_method_id" => payment_method.id
-      })
+      attrs =
+        Map.merge(@valid_attrs, %{
+          "customer_id" => customer.id,
+          "payment_method_id" => payment_method.id
+        })
 
       assert {:ok, %Transaction{} = transaction} = Payments.create_transaction(user, attrs)
       assert transaction.amount == Decimal.new("100.50")
@@ -54,7 +55,7 @@ defmodule PaymentSystem.PaymentsTest do
       transaction = transaction_fixture(user, customer, payment_method, %{status: "processed"})
 
       assert {:ok, %Transaction{} = refund} =
-        Payments.refund_transaction(transaction, "50.25")
+               Payments.refund_transaction(transaction, "50.25")
 
       assert refund.type == "refund"
       assert refund.amount == Decimal.new("50.25")
