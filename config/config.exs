@@ -46,7 +46,6 @@ config :payment_system, PaymentSystemWeb.Auth.Guardian,
   issuer: "payment_system",
   secret_key: "IYMJ2xXdsPYj6nBB10+nsk9/bNfeRllrNJOwIy7GGrUd729vBSciJfZjo7GXPhdw"
 
-
 # Guardian config
 # Run this to generate your secret_key: :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64)
 # More here - https://hexdocs.pm/guardian/Guardian.html#module-configuration
