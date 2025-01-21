@@ -52,7 +52,7 @@ defmodule PaymentSystem.PaymentsTest do
 
     test "refund_transaction/2 creates a refund for a processed transaction",
          %{user: user, customer: customer, payment_method: payment_method} do
-      transaction = transaction_fixture(user, customer, payment_method, %{status: "processed"})
+      transaction = transaction_fixture(user, customer, payment_method)
 
       assert {:ok, %Transaction{} = refund} =
                Payments.refund_transaction(transaction, "50.25")
@@ -75,7 +75,7 @@ defmodule PaymentSystem.PaymentsTest do
       provider: "visa",
       account_number: "4111111111111111"
     }
-    @invalid_attrs %{type: nil, provider: nil, account_number: nil}
+    # @invalid_attrs %{type: nil, provider: nil, account_number: nil}
 
     test "create_payment_method/1 with valid data creates a payment_method",
          %{customer: customer} do
