@@ -56,7 +56,8 @@ defmodule PaymentSystem.MixProject do
       {:bcrypt_elixir, "~> 3.0"},
       {:comeonin, "~> 5.3"},
       {:excoveralls, "~> 0.14", only: [:test, :dev], runtime: false},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false}
     ]
   end
 
