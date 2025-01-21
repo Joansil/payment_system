@@ -51,13 +51,17 @@ defmodule PaymentSystem.AccountsTest do
 
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
-      assert {:ok, updated_user} = Accounts.update_user(user, @update_attrs)
-      assert updated_user.email == "updated@example.com"
+      assert {:ok, ^user} = Accounts.update_user(user, @update_attrs)
+      assert user.email == "updated@example.com"
     end
 
     test "delete_user/1 deletes the user" do
       user = user_fixture()
-      assert {:ok, %User{}} = Accounts.delete_user(user)
+
+      assert {:ok, ^user} = Accounts.get_user(user.id)
+
+      assert {:ok, ^user} = Accounts.delete_user(user)
+
       assert {:error, :not_found} = Accounts.get_user(user.id)
     end
   end

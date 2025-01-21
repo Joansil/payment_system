@@ -2,6 +2,7 @@ defmodule PaymentSystemWeb.Auth.Guardian do
   use Guardian, otp_app: :payment_system
 
   alias PaymentSystem.Accounts
+  alias PaymentSystem.Accounts.User
 
   @spec subject_for_token(any(), any()) :: {:ok, String.t()}
   def subject_for_token(user, _claims) do
@@ -9,7 +10,7 @@ defmodule PaymentSystemWeb.Auth.Guardian do
   end
 
   @spec resource_from_claims(map()) ::
-          {:ok, %PaymentSystem.Accounts.User{}} | {:error, :resource_not_found}
+          {:ok, %User{}} | {:error, :resource_not_found}
   def resource_from_claims(%{"sub" => id}) do
     case Accounts.get_user(id) do
       {:ok, user} -> {:ok, user}

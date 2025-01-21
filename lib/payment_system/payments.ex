@@ -22,6 +22,14 @@ defmodule PaymentSystem.Payments do
     end
   end
 
+  @spec update_transaction(Transaction.t(), map()) ::
+          {:ok, Transaction.t()} | {:error, Ecto.Changeset.t()}
+  def update_transaction(%Transaction{} = transaction, attrs) do
+    transaction
+    |> Transaction.changeset(attrs)
+    |> Repo.update()
+  end
+
   @spec process_transaction(Transaction.t()) :: {:ok, Transaction.t()} | {:error, any()}
   def process_transaction(%Transaction{} = transaction) do
     # Simulate payment processing
@@ -91,6 +99,19 @@ defmodule PaymentSystem.Payments do
     end
   end
 
+  @spec list_transactions(map()) :: [Transaction.t()]
+  def list_transactions(params \\ %{}) do
+    Transaction
+    |> apply_filters(params)
+    |> paginate(params)
+    |> preload([:customer, :payment_method])
+    |> Repo.all()
+  end
+
+  defp apply_filters(query, %{"status" => status}) when is_binary(status) do
+    from t in query, where: t.status == ^status
+  end
+
   @spec list_user_transactions(User.t(), map()) :: [Transaction.t()]
   def list_user_transactions(%User{} = user, pagination \\ %{}) do
     Transaction
@@ -99,6 +120,12 @@ defmodule PaymentSystem.Payments do
     |> preload([:customer, :payment_method])
     |> paginate(pagination)
     |> Repo.all()
+  end
+
+  @spec delete_transaction(Transaction.t()) ::
+          {:ok, Transaction.t()} | {:error, Ecto.Changeset.t()}
+  def delete_transaction(%Transaction{} = transaction) do
+    Repo.delete(transaction)
   end
 
   # Payment Method functions
@@ -115,6 +142,13 @@ defmodule PaymentSystem.Payments do
     payment_method
     |> PaymentMethod.changeset(attrs)
     |> Repo.update()
+  end
+
+  @spec list_payment_methods(Ecto.UUID.t()) :: [PaymentMethod.t()]
+  def list_payment_methods(customer_id) do
+    PaymentMethod
+    |> where([p], p.customer_id == ^customer_id)
+    |> Repo.all()
   end
 
   @spec delete_payment_method(PaymentMethod.t()) ::

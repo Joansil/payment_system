@@ -19,7 +19,7 @@ defmodule PaymentSystem.AccountsFixtures do
         phone: "0112238923798",
         user_id: some_user_id()
       })
-      |> Accounts.create_customer()
+      |> Accounts.create_customer(attrs)
 
     customer
   end
@@ -31,7 +31,6 @@ defmodule PaymentSystem.AccountsFixtures do
     default_attrs = %{
       email: unique_user_email(),
       password: "password123",
-      password_hash: generate_password_hash("password123"),
       role: "some role"
     }
 
@@ -39,7 +38,8 @@ defmodule PaymentSystem.AccountsFixtures do
 
     {:ok, user} =
       attrs
-      |> Map.put(:password_hash, generate_password_hash(attrs[:password]))
+      |> Map.update(:password, "password123", & &1)
+      |> Map.put_new(:password_hash, generate_password_hash(attrs[:password]))
       |> Accounts.create_user()
 
     user

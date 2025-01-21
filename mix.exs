@@ -15,7 +15,9 @@ defmodule PaymentSystem.MixProject do
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
-        "coveralls.html": :test
+        "coveralls.html": :test,
+        "test.coveralls.github": :test,
+        test: :test
       ]
     ]
   end
@@ -55,7 +57,9 @@ defmodule PaymentSystem.MixProject do
       {:guardian, "~> 2.3"},
       {:bcrypt_elixir, "~> 3.0"},
       {:comeonin, "~> 5.3"},
-      {:excoveralls, "~> 0.14", only: [:test, :dev], runtime: false}
+      {:excoveralls, "~> 0.14", only: [:test, :dev], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false}
     ]
   end
 

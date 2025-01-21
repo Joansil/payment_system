@@ -1,4 +1,7 @@
 defmodule PaymentSystem.PaymentsFixtures do
+
+  alias PaymentSystem.Payments
+
   @moduledoc """
   This module defines test helpers for creating
   entities via the `PaymentSystem.Payments` context.
@@ -17,8 +20,23 @@ defmodule PaymentSystem.PaymentsFixtures do
         metadata: %{},
         status: "some status"
       })
-      |> PaymentSystem.Payments.create_transaction()
+      |> Payments.create_transaction(attrs)
 
+    transaction
+  end
+
+  def transaction_fixture(user, customer, payment_method) do
+    attrs = %{
+      amount: "120.5",
+      currency: "BRL",
+      customer_id: customer.id,
+      user_id: user.id,
+      payment_method_id: payment_method.id,
+      metadata: %{},
+      status: "some status"
+    }
+
+    {:ok, transaction} = Payments.create_transaction(user.id, attrs)
     transaction
   end
 
