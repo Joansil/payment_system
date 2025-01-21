@@ -13,9 +13,9 @@ defmodule PaymentSystemWeb.Auth.ErrorHandler do
     |> send_resp(401, body)
   end
 
-  def auth_error(conn, {_type, reason}, _opts) do
-    conn
-    |> put_status(:unauthorized)
-    |> json(%{error: "unauthenticated", reason: reason})
-  end
+  # def auth_error(conn, {_type, reason}, _opts) do
+  #   conn
+  #   |> put_status(:unauthorized)
+  #   |> json(%{error: "unauthenticated", reason: reason})
+  # end
 end
