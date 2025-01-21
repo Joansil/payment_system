@@ -17,7 +17,7 @@ defmodule PaymentSystem.PaymentsFixtures do
         metadata: %{},
         status: "some status"
       })
-      |> PaymentSystem.Payments.create_transaction()
+      |> PaymentSystem.Payments.create_transaction(attrs)
 
     transaction
   end

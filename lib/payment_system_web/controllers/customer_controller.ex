@@ -2,7 +2,7 @@ defmodule PaymentSystemWeb.CustomerController do
   use PaymentSystemWeb, :controller
 
   alias PaymentSystem.Accounts
-  alias PaymentSystem.Accounts.{User, Customer}
+  alias PaymentSystem.Accounts.Customer
   alias PaymentSystemWeb.Auth.Guardian
 
   action_fallback PaymentSystemWeb.FallbackController
@@ -21,12 +21,14 @@ defmodule PaymentSystemWeb.CustomerController do
         conn
         |> put_status(:created)
         |> put_resp_header("location", ~p"/api/customers/#{customer.id}")
+        |> put_view(PaymentSystemWeb.ChangesetJSON)
         |> render(:show, customer: customer)
       else
         {:error, changeset} ->
           conn
           |> put_status(:unprocessable_entity)
-          |> render(PaymentSystemWeb.ChangesetJSON, "error.json", changeset: changeset)
+          |> put_view(PaymentSystemWeb.ChangesetJSON)
+          |> render("error.json", changeset: changeset)
       end
     else
       conn

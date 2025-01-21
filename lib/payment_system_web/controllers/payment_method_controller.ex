@@ -6,8 +6,8 @@ defmodule PaymentSystemWeb.PaymentMethodController do
 
   action_fallback PaymentSystemWeb.FallbackController
 
-  def index(conn, _params) do
-    payment_methods = Payments.list_payment_methods()
+  def index(conn, params) do
+    payment_methods = Payments.list_payment_methods(params)
     render(conn, :index, payment_methods: payment_methods)
   end
 

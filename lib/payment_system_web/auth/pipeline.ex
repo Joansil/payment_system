@@ -8,7 +8,15 @@ defmodule PaymentSystemWeb.Auth.Pipeline do
   plug Guardian.Plug.EnsureAuthenticated
   plug Guardian.Plug.LoadResource, allow_blank: true
 
+  plug :assign_current_user
   plug :log_token
+
+  defp assign_current_user(conn, _opts) do
+    case Guardian.Plug.current_resource(conn) do
+      nil -> conn
+      user -> assign(conn, :current_user, user)
+    end
+  end
 
   defp log_token(conn, _opts) do
     IO.inspect(conn.private[:guardian_token], label: "JWT Token")
